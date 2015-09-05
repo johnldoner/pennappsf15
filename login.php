@@ -3,9 +3,9 @@ session_start();
 echo "loggedin: ". $_SESSION['loggedin'] . "<br>";
 include("connect.php");
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-   $email = $_POST['email'];
+   $user = $_POST['user'];
    $npass = md5($_POST['pass']);
-   foreach($db->query("SELECT * FROM users WHERE email = '$email'") as $row) {
+   foreach($db->query("SELECT * FROM users WHERE user = '$user'") as $row) {
     if($npass == $row['pass']) {
       echo "Login successful!";
       $_SESSION['loggedin'] = "true";
@@ -19,7 +19,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <form action="login.php" method="post">
   <h2>Login</h2>
-  Email: <input type="email" length="30" name="email"><br>
+  Username: <input type="user" length="30" name="user"><br>
   Password: <input type="password" length="30" name="pass"><br>
   <a href="register.php">Register</a>
   <br>

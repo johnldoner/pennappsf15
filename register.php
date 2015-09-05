@@ -1,22 +1,25 @@
 <?php
 session_start();
 include("connect.php");
-$uid = $_SESSION['uid'];
-$user_table = "result_" . $uid;
  if($_SERVER['REQUEST_METHOD'] == 'POST') {
-   $email = $_POST['email'];
+   $user = $_POST['user'];
    $npass = md5($_POST['pass']);
-   $affected_rows = $db->exec("INSERT INTO users (email, pass)
-    VALUES ('$email', '$npass')");
+   $user_table = "result_" . $user;
+   $affected_rows = $db->exec("INSERT INTO users (user, pass)
+    VALUES ('$user', '$npass')");
   echo $affected_rows.' row inserted';
-    $user_table = "result_" . $uid;
-    $db>exec("CREATE TABLE `$user_table` LIKE `table_user_template`");
-    $db>exec("INSERT `$user_table` SELECT * FROM `table_user_template`");
+  $_SESSION['loggedin'] = "true";
+  $_SESSION['user'] = $user;
+    ?>
+    
+    <script> location.replace("reg_success.php"); </script>
+    
+    <?php
  }
 ?>
 <form action="register.php" method="post">
   <h2>Register</h2>
-  Email: <input type="email" length="30" name="email"><br>
+  Username: <input type="text" length="30" name="user"><br>
   Password: <input type="password" length="30" name="pass"><br>
   <a href="login.php">Returning user? Login</a>
   <br>

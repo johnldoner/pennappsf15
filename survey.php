@@ -8,27 +8,59 @@ if($_SESSION['loggedin'] != "true") {
   exit;
 } else {
 $tsid = "tmp_" . $sid;
+$user_table = $_SESSION['user_table'];
+echo "User Table: " .$user_table. "<br>";
 
 // TYPE OF SURVEY
-$table = "basic";
+$sql = "SELECT * FROM `$user_table` WHERE DATE(dateTaken) = DATE(NOW())";
+echo $sql;
+$stmt = $db->query($sql);
+$row_count = $stmt->rowCount();
+echo $row_count.' rows selected';
 
-$tid = "results_" . $uid;
-$db->exec("CREATE TABLE IF NOT EXISTS `$tid` (
-uid INT(10),
-qid INT(10),
-sid VARCHAR(200),
-score TINYINT(3),
-timestamp TIMESTAMP
-)");
+ if ($row_count == 0) {
+$table = "template_basic";
+$_SESSION['curr_table'] = $table;
+ } else {
+   // check to see if there are any red flags
+   $dateNow = date('Y-m-d');
+   $sql = "SELECT * FROM `$user_table` WHERE DATE(dateTaken) = '$dateNow'";
+   echo "<br>".$sql . "<br>";
+ foreach($db->query($sql) as $row) {
+    if($row['depressedyn'] == 'Yes') {
+      $table = "template_depression";
+    }
+    if($row['suicidalyn'] == 'Yes') {
+      $table = "template_suicide";
+    }
+    if($row['anxietyyn'] == 'Yes') {
+      $table = "template_anxiety";
+    }
+    if($row['stressyn'] == 'Yes') {
+      $table = "template_stressed";
+    }
+    if($row['burnoutyn'] == 'Yes') {
+      $table = "template_burnout";
+    }
+    
+    
+    
+    $_SESSION['curr_table'] = $table;
+}
+  
+  echo "You have already taken this survey today!";
+ }
 
-$results = $db->query("SHOW TABLES LIKE `'$tsid'`");
-
+$results = $db->query("SELECT * FROM `$tsid`");
     if(!$results) {
         echo "table does not exist... duplicating table";
         $db->query("CREATE TABLE `$tsid` LIKE `$table`");
         $db->query("INSERT `$tsid` SELECT * FROM `$table`");
     }
  //   header("Location:survey2.php");
+ 
 }
 ?>
- <script> location.replace("survey2.php"); </script>
+
+ <script> // location.replace("survey2.php"); </script>
+ 
