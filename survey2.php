@@ -18,6 +18,13 @@ echo $tsid . "<br>";
 // TYPE OF SURVEY
 $table = "basic";
 
+// CONDITIONS
+$sql_dep = "SELECT * FROM `$tsid` WHERE id > 1 AND id < 8";
+$sql_sui = "SELECT * FROM `$tsid` WHERE id > 7 AND id < 12";
+$sql_anx = "SELECT * FROM `$tsid` WHERE id > 12 AND id < 20";
+$sql_str = "SELECT * FROM `$tsid` WHERE id > 20 AND id < 28";
+$sql_bur = "SELECT * FROM `$tsid` WHERE id > 28";
+
 $sql = "SELECT * FROM `$tsid`";
 $stmt = $db->query($sql);
 $_SESSION['row_count'] = $stmt->rowCount();

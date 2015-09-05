@@ -1,18 +1,22 @@
 <?php
 session_start();
 include("connect.php");
-$uid = $_SESSION['uid'];
-$user_table = "result_" . $uid;
- if($_SERVER['REQUEST_METHOD'] == 'POST') {
-   $email = $_POST['email'];
-   $npass = md5($_POST['pass']);
-   $affected_rows = $db->exec("INSERT INTO users (email, pass)
-    VALUES ('$email', '$npass')");
-  echo $affected_rows.' row inserted';
+$db->query("SELECT * FROM users WHERE email = '$email'");
+
+foreach($db->query("SELECT * FROM users WHERE email = '$email'") as $row) {
+    if($npass == $row['pass']) {
+      echo "Login successful!";
+      $_SESSION['loggedin'] = "true";
+      $_SESSION['uid'] = $row['uid'];
+      echo "Proceed to <a href='survey.php'>survey</a>.";
+    } else {
+      echo "Invalid username/password!";
+    }
+  }
+  
     $user_table = "result_" . $uid;
     $db>exec("CREATE TABLE `$user_table` LIKE `table_user_template`");
     $db>exec("INSERT `$user_table` SELECT * FROM `table_user_template`");
- }
 ?>
 <form action="register.php" method="post">
   <h2>Register</h2>
